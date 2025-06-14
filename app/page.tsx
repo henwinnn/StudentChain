@@ -90,29 +90,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Student Login */}
-        <section className="max-w-md mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Student Login</CardTitle>
-              <CardDescription className="text-center">Access your learning dashboard</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="studentId">Student ID</Label>
-                <Input id="studentId" placeholder="Enter your student ID" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="Enter your password" />
-              </div>
-              <Link href="/dashboard" className="block">
-                <Button className="w-full">Login to Dashboard</Button>
-              </Link>
-              <p className="text-sm text-center text-gray-600">New student? Connect your wallet to get started</p>
-            </CardContent>
-          </Card>
-        </section>
+      
       </div>
     </div>
   )
