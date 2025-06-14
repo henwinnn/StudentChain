@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { BookOpen, Shield, Zap, Users, Wallet, GraduationCap } from "lucide-react"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export default function LandingPage() {
   return (
@@ -37,10 +38,8 @@ export default function LandingPage() {
 
           {/* Connect Wallet Button */}
           <div className="flex justify-center mb-12">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg">
-              <Wallet className="mr-2 h-5 w-5" />
-              Connect Wallet
-            </Button>
+                         <ConnectButton />
+
           </div>
         </section>
 
