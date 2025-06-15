@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,6 +22,8 @@ import {
   DollarSign,
   UserCheck,
 } from "lucide-react"
+import { useReadContract } from "wagmi"
+import { stableSwapContract } from "@/contracts/contrats"
 
 export default function AdminPanel() {
   const students = [
@@ -76,6 +79,21 @@ export default function AdminPanel() {
       created: "2024-01-10",
     },
   ]
+
+
+  
+
+
+   const { 
+    data,
+  } = useReadContract({
+    ...stableSwapContract,
+    functionName: 'getAllStudent',
+    args: [],
+  })
+
+  console.log('data', data)
+
 
   return (
     <div className="min-h-screen bg-gray-50">
