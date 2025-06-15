@@ -230,7 +230,7 @@ function formatTimestamp(timestamp: number | bigint): string {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {AllStudents?.map((student, index) => (
+                    {AllStudents?.slice(0, AllStudents.length - 1)?.map((student, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium">{student.nim}</TableCell>
                         <TableCell>{student.name}</TableCell>
