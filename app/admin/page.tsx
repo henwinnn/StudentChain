@@ -23,7 +23,7 @@ import {
   UserCheck,
 } from "lucide-react"
 import { useReadContract } from "wagmi"
-import { stableSwapContract } from "@/contracts/contrats"
+import { CampusAddressContract, stableSwapContract } from "@/contracts/contrats"
 
 export default function AdminPanel() {
   const students = [
@@ -87,7 +87,7 @@ export default function AdminPanel() {
    const { 
     data,
   } = useReadContract({
-    ...stableSwapContract,
+    ...CampusAddressContract,
     functionName: 'getAllStudent',
     args: [],
   })
