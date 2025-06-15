@@ -138,7 +138,7 @@ function formatTimestamp(timestamp: number | bigint): string {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Enrollment Date:</span>
-                  <span className="text-sm font-medium">{dataProfile?.enrollmentYear ? formatTimestamp(Number(dataProfile?.enrollmentYear)) : "N/A"}</span>
+                  <span className="text-sm font-medium">{formatTimestamp(Number(dataProfile?.enrollmentYear))}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Semester  :</span>
