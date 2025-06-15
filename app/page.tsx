@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { BookOpen, Shield, Zap, Users, Wallet, GraduationCap } from "lucide-react"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export default function LandingPage() {
   return (
@@ -37,10 +38,8 @@ export default function LandingPage() {
 
           {/* Connect Wallet Button */}
           <div className="flex justify-center mb-12">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg">
-              <Wallet className="mr-2 h-5 w-5" />
-              Connect Wallet
-            </Button>
+                         <ConnectButton />
+
           </div>
         </section>
 
@@ -90,29 +89,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Student Login */}
-        <section className="max-w-md mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Student Login</CardTitle>
-              <CardDescription className="text-center">Access your learning dashboard</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="studentId">Student ID</Label>
-                <Input id="studentId" placeholder="Enter your student ID" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="Enter your password" />
-              </div>
-              <Link href="/dashboard" className="block">
-                <Button className="w-full">Login to Dashboard</Button>
-              </Link>
-              <p className="text-sm text-center text-gray-600">New student? Connect your wallet to get started</p>
-            </CardContent>
-          </Card>
-        </section>
+      
       </div>
     </div>
   )
