@@ -22,10 +22,11 @@ import {
   DollarSign,
   UserCheck,
 } from "lucide-react"
-import { useReadContract } from "wagmi"
-import { CampusAddressContract, stableSwapContract } from "@/contracts/contrats"
+
 
 export default function AdminPanel() {
+
+
   const students = [
     {
       id: "STU-001",
@@ -81,18 +82,9 @@ export default function AdminPanel() {
   ]
 
 
+
+
   
-
-
-   const { 
-    data,
-  } = useReadContract({
-    ...CampusAddressContract,
-    functionName: 'getAllStudent',
-    args: [],
-  })
-
-  console.log('data', data)
 
 
   return (

@@ -11,7 +11,9 @@ export const StudentIDContract = {
   abi: abi ,
 } as const;
 
-export const CampusAddressContract = {
-  address: "0x9ecF5a31cf3F2df152A0b271F28C42f4CC6103b9" as Address,
+export const CampusMasterContract = {
+  address: "0x83eE0bC5B57E0E43472636Cb7a506582eda53707" as Address,
   abi: abi ,
 } as const;
+
+

@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,8 +18,12 @@ import {
   Clock,
   CheckCircle,
 } from "lucide-react"
+import { useAccount, useReadContract } from "wagmi"
+import {  CampusCreditContract, CampusMasterContract } from "@/contracts/contrats"
 
 export default function Dashboard() {
+
+  const {address } = useAccount();
   const recentActivities = [
     { action: "Completed", item: "Blockchain Fundamentals", time: "2 hours ago", type: "course" },
     { action: "Earned", item: "50 Credits", time: "2 hours ago", type: "credit" },
@@ -31,6 +36,55 @@ export default function Dashboard() {
     { id: "CERT-002", course: "Web3 Development", date: "2024-01-10", verified: true },
     { id: "CERT-003", course: "DeFi Protocols", date: "2024-01-05", verified: false },
   ]
+
+  // Add this function at the top of your component
+function formatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+    const { 
+      data: dataProfile,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'getStudentProfileByAddress',
+      args: [address],
+    })
+
+
+       const { 
+      data: balance,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'checkBalance',
+      args: [address],
+    })
+
+     const { 
+      data: DailySpendingLimit,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'dailySpendingLimit',
+      args: [address],
+    })
+
+      const { 
+      data: spendToday,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'spendToday',
+      args: [address],
+    })
+    console.log('dataProfile', dataProfile)
+    console.log('address', address)
+    console.log('DailySpendingLimit', DailySpendingLimit)
+    
+
+    
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,21 +124,22 @@ export default function Dashboard() {
                 <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="h-10 w-10 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-lg">John Doe</h3>
-                <p className="text-sm text-gray-600">Student ID: STU-2024-001</p>
+                <h3 className="font-semibold text-lg">{dataProfile?.name}</h3>
+                <p className="text-sm text-gray-600">NIM: {dataProfile?.nim}</p>
                 <Badge variant="secondary" className="mt-2">
-                  Active Student
+                  {dataProfile?.isActive ? "Active Student" : "Inactive Student"}
+                  
                 </Badge>
               </div>
               <Separator />
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Enrollment Date:</span>
-                  <span className="text-sm font-medium">Jan 1, 2024</span>
+                  <span className="text-sm font-medium">{dataProfile?.enrollmentYear ? formatTimestamp(Number(dataProfile.enrollmentYear)) : "N/A"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Courses Completed:</span>
-                  <span className="text-sm font-medium">12</span>
+                  <span className="text-sm text-gray-600">Semester  :</span>
+                  <span className="text-sm font-medium">{dataProfile?.semester}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Current Level:</span>
@@ -107,25 +162,25 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <div className="text-3xl font-bold text-green-600 mb-2">1,250</div>
+                    <div className="text-3xl font-bold text-green-600 mb-2">{balance}</div>
                     <p className="text-sm text-gray-600 mb-4">Available Credits</p>
-                    <Progress value={75} className="mb-2" />
+                    <Progress value={10} className="mb-2" />
                     <p className="text-xs text-gray-500">75% of monthly allocation used</p>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-medium">Recent Transactions</h4>
+                    <h4 className="font-medium">Spending Transactions</h4>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>Course Completion Bonus</span>
-                        <span className="text-green-600">+50</span>
+                        <span>Daily Spending Limit</span>
+                        <span className="text-green-600">{DailySpendingLimit}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Premium Content Access</span>
-                        <span className="text-red-600">-25</span>
+                        <span>Spent Today</span>
+                        <span className="text-red-600">{spendToday}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span>Weekly Login Bonus</span>
-                        <span className="text-green-600">+10</span>
+                        <span>Spending Left</span>
+                        <span className="text-green-600">{DailySpendingLimit - spendToday}</span>
                       </div>
                     </div>
                   </div>
