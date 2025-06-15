@@ -67,27 +67,27 @@ function formatTimestamp(timestamp: number | bigint): string {
       args: [address],
     })
 
-    //  const { 
-    //   data: DailySpendingLimit,
-    // } = useReadContract({
-    //   ...CampusMasterContract,
-    //   functionName: 'dailySpendingLimit',
-    //   args: [address],
-    // })
+     const { 
+      data: DailySpendingLimit,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'dailySpendingLimit',
+      args: [address],
+    })
 
-    //   const { 
-    //   data: spendToday,
-    // } = useReadContract({
-    //   ...CampusMasterContract,
-    //   functionName: 'spendToday',
-    //   args: [address],
-    // })
+      const { 
+      data: spendToday,
+      isPending
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'spendToday',
+      args: [address],
+    })
     console.log('dataProfile', dataProfile)
     console.log('address', address)
-    console.log('DailySpendingLimit', DailySpendingLimit)
     
 
-    
+    console.log('ispending', isPending)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -183,7 +183,10 @@ function formatTimestamp(timestamp: number | bigint): string {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Spending Left</span>
+                        {!isPending && (
+
                         <span className="text-green-600">{DailySpendingLimit - spendToday}</span>
+                        )}
                       </div>
                     </div>
                   </div>
