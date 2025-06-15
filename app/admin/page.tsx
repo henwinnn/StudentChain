@@ -24,6 +24,7 @@ import {
 } from "lucide-react"
 import { useReadContract } from "wagmi"
 import { CampusMasterContract } from "@/contracts/contrats"
+import AddStudentForm from "@/components/views/student-management/add-student-form"
 
 
 export default function AdminPanel() {
@@ -206,10 +207,7 @@ function formatTimestamp(timestamp: number | bigint): string {
                     <CardTitle>Student Management</CardTitle>
                     <CardDescription>Manage student accounts and enrollment</CardDescription>
                   </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Student
-                  </Button>
+                  <AddStudentForm />
                 </div>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-gray-400" />
