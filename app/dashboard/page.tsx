@@ -19,7 +19,7 @@ import {
   CheckCircle,
 } from "lucide-react"
 import { useAccount, useReadContract } from "wagmi"
-import {  CampusCreditContract, CampusMasterContract } from "@/contracts/contrats"
+import {   CampusMasterContract } from "@/contracts/contrats"
 
 export default function Dashboard() {
 
@@ -38,8 +38,11 @@ export default function Dashboard() {
   ]
 
   // Add this function at the top of your component
-function formatTimestamp(timestamp: number): string {
-  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+// Update the formatTimestamp function to handle BigInt
+function formatTimestamp(timestamp: number | bigint): string {
+  // Convert BigInt to number before using it
+  const timestampNumber = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
+  const date = new Date(timestampNumber * 1000); // Convert seconds to milliseconds
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -64,21 +67,21 @@ function formatTimestamp(timestamp: number): string {
       args: [address],
     })
 
-     const { 
-      data: DailySpendingLimit,
-    } = useReadContract({
-      ...CampusMasterContract,
-      functionName: 'dailySpendingLimit',
-      args: [address],
-    })
+    //  const { 
+    //   data: DailySpendingLimit,
+    // } = useReadContract({
+    //   ...CampusMasterContract,
+    //   functionName: 'dailySpendingLimit',
+    //   args: [address],
+    // })
 
-      const { 
-      data: spendToday,
-    } = useReadContract({
-      ...CampusMasterContract,
-      functionName: 'spendToday',
-      args: [address],
-    })
+    //   const { 
+    //   data: spendToday,
+    // } = useReadContract({
+    //   ...CampusMasterContract,
+    //   functionName: 'spendToday',
+    //   args: [address],
+    // })
     console.log('dataProfile', dataProfile)
     console.log('address', address)
     console.log('DailySpendingLimit', DailySpendingLimit)
@@ -135,7 +138,7 @@ function formatTimestamp(timestamp: number): string {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Enrollment Date:</span>
-                  <span className="text-sm font-medium">{dataProfile?.enrollmentYear ? formatTimestamp(Number(dataProfile.enrollmentYear)) : "N/A"}</span>
+                  <span className="text-sm font-medium">{dataProfile?.enrollmentYear ? formatTimestamp(Number(dataProfile?.enrollmentYear)) : "N/A"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Semester  :</span>

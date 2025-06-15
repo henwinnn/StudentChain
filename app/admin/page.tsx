@@ -22,6 +22,8 @@ import {
   DollarSign,
   UserCheck,
 } from "lucide-react"
+import { useReadContract } from "wagmi"
+import { CampusMasterContract } from "@/contracts/contrats"
 
 
 export default function AdminPanel() {
@@ -85,7 +87,31 @@ export default function AdminPanel() {
 
 
   
+//  const { address } = useAccount();
 
+   const { 
+      data: AllStudents,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'getAllStudent',
+      args: [],
+    })
+
+  
+    console.log('allStudent', AllStudents)
+
+     // Add this function at the top of your component
+// Update the formatTimestamp function to handle BigInt
+function formatTimestamp(timestamp: number | bigint): string {
+  // Convert BigInt to number before using it
+  const timestampNumber = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
+  const date = new Date(timestampNumber * 1000); // Convert seconds to milliseconds
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -119,7 +145,7 @@ export default function AdminPanel() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
+              <div className="text-2xl font-bold">{AllStudents?.length - 1}</div>
               <p className="text-xs text-muted-foreground">
                 <TrendingUp className="h-3 w-3 inline mr-1" />
                 +12% from last month
@@ -204,18 +230,18 @@ export default function AdminPanel() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {students.map((student) => (
-                      <TableRow key={student.id}>
-                        <TableCell className="font-medium">{student.id}</TableCell>
+                    {AllStudents?.map((student, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{student.nim}</TableCell>
                         <TableCell>{student.name}</TableCell>
-                        <TableCell>{student.email}</TableCell>
-                        <TableCell>{student.credits}</TableCell>
+                        <TableCell>{student.name}</TableCell>
+                        <TableCell>{student.name}</TableCell>
                         <TableCell>
                           <Badge variant={student.status === "Active" ? "default" : "secondary"}>
-                            {student.status}
+                            {student.name}
                           </Badge>
                         </TableCell>
-                        <TableCell>{student.enrolled}</TableCell>
+                        <TableCell>{ student?.enrollmentYear ? formatTimestamp(student?.enrollmentYear) : "N/A"}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button size="sm" variant="ghost">
@@ -301,7 +327,7 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Student ID</label>
+                    <label className="text-sm font-medium">NIM</label>
                     <Input placeholder="Enter student ID" />
                   </div>
                   <div className="space-y-2">
@@ -326,13 +352,9 @@ export default function AdminPanel() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 border rounded">
-                      <div>
-                        <p className="font-medium">STU-001</p>
-                        <p className="text-sm text-gray-600">Course completion bonus</p>
-                      </div>
-                      <span className="text-green-600 font-medium">+50</span>
-                    </div>
+                  
+
+      
                     <div className="flex justify-between items-center p-3 border rounded">
                       <div>
                         <p className="font-medium">STU-002</p>
