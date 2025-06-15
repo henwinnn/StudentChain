@@ -83,11 +83,9 @@ function formatTimestamp(timestamp: number | bigint): string {
       functionName: 'spendToday',
       args: [address],
     })
-    console.log('dataProfile', dataProfile)
-    console.log('address', address)
-    
 
-    console.log('ispending', isPending)
+   
+   
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -165,7 +163,7 @@ function formatTimestamp(timestamp: number | bigint): string {
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <div className="text-3xl font-bold text-green-600 mb-2">{balance}</div>
+                    <div className="text-3xl font-bold text-green-600 mb-2">{(balance as bigint)}</div>
                     <p className="text-sm text-gray-600 mb-4">Available Credits</p>
                     <Progress value={10} className="mb-2" />
                     <p className="text-xs text-gray-500">75% of monthly allocation used</p>
