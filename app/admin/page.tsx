@@ -9,7 +9,6 @@ import {
   Users,
   BookOpen,
   Coins,
-  BarChart3,
   Settings,
   ArrowLeft,
   Shield,
@@ -155,9 +154,8 @@ export default function AdminPanel() {
         <Tabs defaultValue="students" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="students">Student Management</TabsTrigger>
-            <TabsTrigger value="courses">Course Management</TabsTrigger>
+            <TabsTrigger value="courses">Add Student</TabsTrigger>
             <TabsTrigger value="credits">Credit Operations</TabsTrigger>
-            <TabsTrigger value="analytics">System Analytics</TabsTrigger>
             <TabsTrigger value="contracts">Contract Controls</TabsTrigger>
           </TabsList>
 
@@ -222,63 +220,38 @@ export default function AdminPanel() {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent>  
 
           {/* Course Management */}
           <TabsContent value="courses">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>Course Management</CardTitle>
-                    <CardDescription>Create and manage educational courses</CardDescription>
+            <div className="grid md:grid-cols-2 gap-6" >
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add Student</CardTitle>
+                  <CardDescription>Manage student credits and transactions</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Student ID</label>
+                    <Input placeholder="Enter student ID" />
                   </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Course
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Course ID</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Instructor</TableHead>
-                      <TableHead>Students</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {courses.map((course) => (
-                      <TableRow key={course.id}>
-                        <TableCell className="font-medium">{course.id}</TableCell>
-                        <TableCell>{course.title}</TableCell>
-                        <TableCell>{course.instructor}</TableCell>
-                        <TableCell>{course.students}</TableCell>
-                        <TableCell>
-                          <Badge variant={course.status === "Active" ? "default" : "secondary"}>{course.status}</Badge>
-                        </TableCell>
-                        <TableCell>{course.created}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="ghost">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Credit Amount</label>
+                    <Input type="number" placeholder="Enter amount" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Operation Type</label>
+                    <select className="w-full p-2 border rounded-md">
+                      <option>Add Credits</option>
+                      <option>Deduct Credits</option>
+                      <option>Transfer Credits</option>
+                    </select>
+                  </div>
+                  <Button className="w-full">Execute Operation</Button>
+                </CardContent>
+              </Card>
+
+            </div>
           </TabsContent>
 
           {/* Credit Operations */}
@@ -344,79 +317,7 @@ export default function AdminPanel() {
           </TabsContent>
 
           {/* System Analytics */}
-          <TabsContent value="analytics">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2" />
-                    System Analytics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span>Total Platform Users</span>
-                      <span className="font-bold">1,234</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Active This Month</span>
-                      <span className="font-bold">892</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Course Completions</span>
-                      <span className="font-bold">456</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Certificates Issued</span>
-                      <span className="font-bold">234</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Average Session Time</span>
-                      <span className="font-bold">45 min</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Performance Metrics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Course Completion Rate</span>
-                        <span className="text-sm font-medium">78%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: "78%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Student Satisfaction</span>
-                        <span className="text-sm font-medium">92%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: "92%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Platform Uptime</span>
-                        <span className="text-sm font-medium">99.9%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: "99.9%" }}></div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          
 
           {/* Contract Controls */}
           <TabsContent value="contracts">
