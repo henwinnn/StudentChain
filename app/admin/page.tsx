@@ -33,7 +33,7 @@ import {
   Search,
   TrendingUp,
   DollarSign,
-  UserCheck,
+  // UserCheck,
 } from 'lucide-react';
 import { useReadContract } from 'wagmi';
 import {
@@ -529,44 +529,27 @@ export default function AdminPanel() {
                     <h3 className="font-medium">Contract Status</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between rounded border p-3">
-                        <span>Student Registry Contract</span>
+                        <span>StudentID </span>
                         <Badge variant="default">Active</Badge>
                       </div>
                       <div className="flex items-center justify-between rounded border p-3">
-                        <span>Credit Token Contract</span>
+                        <span>CreditCampus</span>
                         <Badge variant="default">Active</Badge>
                       </div>
                       <div className="flex items-center justify-between rounded border p-3">
-                        <span>Certificate NFT Contract</span>
+                        <span>Master</span>
                         <Badge variant="default">Active</Badge>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="font-medium">System Controls</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium">Contract Status </h3>
+                      <Badge variant="default">Active</Badge>
+                    </div>
+
                     <div className="space-y-3">
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        <UserCheck className="mr-2 h-4 w-4" />
-                        Verify Student Identities
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        <Coins className="mr-2 h-4 w-4" />
-                        Mint Credit Tokens
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start"
-                      >
-                        <Shield className="mr-2 h-4 w-4" />
-                        Update Contract Permissions
-                      </Button>
                       <Button
                         variant="destructive"
                         className="w-full justify-start"
