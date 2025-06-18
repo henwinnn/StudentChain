@@ -1,3 +1,4 @@
+"use client"
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +11,23 @@ import {
 
 import { BookOpen, Shield, Zap, Users, GraduationCap } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useReadContract } from 'wagmi';
+import { CampusMasterContract } from '@/contracts/contrats';
 
 export default function LandingPage() {
+
+  const { address } = useAccount();
+
+   const { 
+      data: adminRole,
+    } = useReadContract({
+      ...CampusMasterContract,
+      functionName: 'hasRole',
+      args: ['0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775', address],
+    })
+
+    console.log('role', adminRole)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
@@ -25,9 +41,13 @@ export default function LandingPage() {
             <Link href="/dashboard">
               <Button variant="ghost">Dashboard</Button>
             </Link>
+
+            {adminRole && (
+
             <Link href="/admin">
               <Button variant="ghost">Admin</Button>
             </Link>
+            )}
           </div>
         </div>
       </nav>
