@@ -10,6 +10,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { MonadNetwork } from "@/chain/Monad";
 import { Geist, Geist_Mono } from "next/font/google"; // Add this import
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function layout({
           <QueryClientProvider client={queryClient}>
             <RainbowKitProvider modalSize="compact" theme={darkTheme()}>
               {children}
+              <Toaster/>
             </RainbowKitProvider>
           </QueryClientProvider>
         </WagmiProvider>

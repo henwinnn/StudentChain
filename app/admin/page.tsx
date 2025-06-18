@@ -40,6 +40,8 @@ import {
   CampusMasterContract,
   CampusCreditContract,
 } from '@/contracts/contrats';
+import AddStudentForm from "@/components/views/student-management/add-student-form"
+        
 
 export default function AdminPanel() {
   // const students = [
@@ -245,10 +247,9 @@ export default function AdminPanel() {
                       Manage student accounts and enrollment
                     </CardDescription>
                   </div>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Student
-                  </Button>
+                  <AddStudentForm />
+
+
                 </div>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-gray-400" />
