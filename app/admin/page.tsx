@@ -24,6 +24,7 @@ import {
   BookOpen,
   Coins,
   // BarChart3,
+
   Settings,
   ArrowLeft,
   Shield,
@@ -315,7 +316,7 @@ export default function AdminPanel() {
                 </Table>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent>  
 
           {/* Course Management */}
           {/* <TabsContent value="courses">
@@ -373,6 +374,7 @@ export default function AdminPanel() {
               </CardContent>
             </Card>
           </TabsContent> */}
+
 
           {/* Credit Operations */}
           <TabsContent value="credits">
@@ -511,6 +513,8 @@ export default function AdminPanel() {
               </Card>
             </div>
           </TabsContent> */}
+
+          
 
           {/* Contract Controls */}
           <TabsContent value="contracts">
