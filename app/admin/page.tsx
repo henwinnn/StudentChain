@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,106 +22,98 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users,
-  BookOpen,
   Coins,
-  // BarChart3,
+  WalletCards,
   Settings,
   ArrowLeft,
   Shield,
-  Plus,
-  // Edit,
   Trash2,
   Search,
   TrendingUp,
-  DollarSign,
-  // UserCheck,
+  Pause,
+  Play,
 } from 'lucide-react';
 import { useReadContract } from 'wagmi';
-import {
-  CampusMasterContract,
-  CampusCreditContract,
-} from '@/contracts/contrats';
+import { CampusMasterContract } from '@/contracts/contrats';
+import AddStudentForm from '@/components/views/student-management/add-student-form';
+import { formatBigIntToDecimal } from '@/lib/utils';
+import { useWriteContract } from 'wagmi';
+import SetLimit from '@/components/views/student-management/setLimit';
+import { toast } from 'sonner';
+import { useTransactions } from '@/hooks/useTransaction';
 
 export default function AdminPanel() {
-  // const students = [
-  //   {
-  //     id: "STU-001",
-  //     name: "John Doe",
-  //     email: "john@example.com",
-  //     credits: 1250,
-  //     status: "Active",
-  //     enrolled: "2024-01-01",
-  //   },
-  //   {
-  //     id: "STU-002",
-  //     name: "Jane Smith",
-  //     email: "jane@example.com",
-  //     credits: 890,
-  //     status: "Active",
-  //     enrolled: "2024-01-02",
-  //   },
-  //   {
-  //     id: "STU-003",
-  //     name: "Bob Johnson",
-  //     email: "bob@example.com",
-  //     credits: 450,
-  //     status: "Inactive",
-  //     enrolled: "2024-01-03",
-  //   },
-  // ]
+  const [formDataTopUp, setFormDataTopUp] = useState({
+    nim: '',
+    amount: '',
+  });
 
-  // const courses = [
-  //   {
-  //     id: "CRS-001",
-  //     title: "Blockchain Fundamentals",
-  //     instructor: "Dr. Smith",
-  //     students: 45,
-  //     status: "Active",
-  //     created: "2024-01-01",
-  //   },
-  //   {
-  //     id: "CRS-002",
-  //     title: "Smart Contracts 101",
-  //     instructor: "Prof. Johnson",
-  //     students: 32,
-  //     status: "Active",
-  //     created: "2024-01-05",
-  //   },
-  //   {
-  //     id: "CRS-003",
-  //     title: "DeFi Protocols",
-  //     instructor: "Dr. Brown",
-  //     students: 28,
-  //     status: "Draft",
-  //     created: "2024-01-10",
-  //   },
-  // ]
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormDataTopUp((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
-  //  const { address } = useAccount();
+  const { writeContract, isPending } = useWriteContract();
+  // const { } = useWaitForTransactionReceipt({
+  //   hash,
+  // });
 
-  const { data: AllStudents, isSuccess: succ } = useReadContract({
+  const { data: transactions } = useTransactions();
+  console.log(transactions);
+
+  const { data: AllStudents } = useReadContract({
     ...CampusMasterContract,
     functionName: 'getAllStudent',
     args: [],
   });
 
-  console.log('AllStudents', AllStudents, succ);
-
-  const { data: studentData, isSuccess } = useReadContract({
-    ...CampusMasterContract,
-    functionName: 'getStudentByNIM',
-    args: ['321'],
-  });
-
-  console.log('studentData', studentData, isSuccess);
-
   const { data: totalSupply } = useReadContract({
-    ...CampusCreditContract,
+    ...CampusMasterContract,
     functionName: 'totalSupply',
     args: [],
   });
 
-  console.log('totalSupply', totalSupply);
+  const { data: statusStudentIDIsPaused } = useReadContract({
+    ...CampusMasterContract,
+    functionName: 'statusStudentID',
+    args: [],
+  });
+
+  const { data: statusstatusCampusCreditIsPaused } = useReadContract({
+    ...CampusMasterContract,
+    functionName: 'statusCampusCredit',
+    args: [],
+  });
+
+  function pauseAndUnpauseContract(nameFunction: string) {
+    writeContract({
+      abi: CampusMasterContract.abi,
+      address: CampusMasterContract.address,
+      functionName: nameFunction,
+      args: [],
+    });
+  }
+
+  function topUpStudentMint() {
+    try {
+      writeContract({
+        abi: CampusMasterContract.abi,
+        address: CampusMasterContract.address,
+        functionName: 'topUpStudentByNim',
+        args: [formDataTopUp.nim, formDataTopUp.amount],
+      });
+
+      if (isPending) {
+        toast.success('Limit set successfully');
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error('Error setting limit');
+    }
+  }
 
   // Add this function at the top of your component
   // Update the formatTimestamp function to handle BigInt
@@ -134,6 +127,11 @@ export default function AdminPanel() {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  function shortenAddress(address: string, chars = 4) {
+    if (!address) return '';
+    return `${address.slice(0, 2 + chars)}...${address.slice(-chars)}`;
   }
 
   return (
@@ -161,9 +159,9 @@ export default function AdminPanel() {
 
       <div className="container mx-auto px-4 py-8">
         {/* System Analytics Overview */}
-        <div className="mb-8 grid gap-6 md:grid-cols-4">
+        <div className="mb-6 grid gap-4 lg:grid-cols-3">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
                 Total Students
               </CardTitle>
@@ -181,45 +179,32 @@ export default function AdminPanel() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
-                Active Courses
+                Total Transaction
               </CardTitle>
-              <BookOpen className="text-muted-foreground h-4 w-4" />
+              <WalletCards className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">45</div>
+              <div className="text-2xl font-bold">
+                {transactions?.totalCount}
+              </div>
               <p className="text-muted-foreground text-xs">+3 new this week</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
                 Total Supply
               </CardTitle>
               <Coins className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalSupply}</div>
-              <p className="text-muted-foreground text-xs">
-                +8% from last month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Transaction
-              </CardTitle>
-              <DollarSign className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$12,345</div>
-              <p className="text-muted-foreground text-xs">
-                +15% from last month
-              </p>
+              <div className="text-2xl font-bold">
+                {totalSupply ? formatBigIntToDecimal(totalSupply, 18) : 0}
+              </div>
+              <p className="text-muted-foreground text-xs">18 Decimals</p>
             </CardContent>
           </Card>
         </div>
@@ -245,10 +230,7 @@ export default function AdminPanel() {
                       Manage student accounts and enrollment
                     </CardDescription>
                   </div>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Student
-                  </Button>
+                  <AddStudentForm />
                 </div>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-gray-400" />
@@ -305,6 +287,10 @@ export default function AdminPanel() {
                               <Button size="sm" variant="ghost">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
+                              {/* <Button size="sm" variant="ghost">
+                                <HandCoins className="h-4 w-4" />
+                              </Button> */}
+                              <SetLimit Nim={student?.nim} />
                             </div>
                           </TableCell>
                         </TableRow>
@@ -315,63 +301,6 @@ export default function AdminPanel() {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Course Management */}
-          {/* <TabsContent value="courses">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>Course Management</CardTitle>
-                    <CardDescription>Create and manage educational courses</CardDescription>
-                  </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Course
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Course ID</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Instructor</TableHead>
-                      <TableHead>Students</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {courses.map((course) => (
-                      <TableRow key={course.id}>
-                        <TableCell className="font-medium">{course.id}</TableCell>
-                        <TableCell>{course.title}</TableCell>
-                        <TableCell>{course.instructor}</TableCell>
-                        <TableCell>{course.students}</TableCell>
-                        <TableCell>
-                          <Badge variant={course.status === "Active" ? "default" : "secondary"}>{course.status}</Badge>
-                        </TableCell>
-                        <TableCell>{course.created}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button size="sm" variant="ghost">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
 
           {/* Credit Operations */}
           <TabsContent value="credits">
@@ -386,23 +315,26 @@ export default function AdminPanel() {
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">NIM</label>
-                    <Input placeholder="Enter student ID" />
+                    <Input
+                      id="nim"
+                      placeholder="Enter student ID"
+                      onChange={handleChange}
+                      value={formDataTopUp.nim}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Credit Amount</label>
-                    <Input type="number" placeholder="Enter amount" />
+                    <Input
+                      id="amount"
+                      type="number"
+                      placeholder="Enter amount"
+                      onChange={handleChange}
+                      value={formDataTopUp.amount}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">
-                      Operation Type
-                    </label>
-                    <select className="w-full rounded-md border p-2">
-                      <option>Add Credits</option>
-                      <option>Deduct Credits</option>
-                      <option>Transfer Credits</option>
-                    </select>
-                  </div>
-                  <Button className="w-full">Execute Operation</Button>
+                  <Button className="w-full" onClick={topUpStudentMint}>
+                    Execute Operation
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -411,105 +343,28 @@ export default function AdminPanel() {
                   <CardTitle>Recent Credit Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between rounded border p-3">
-                      <div>
-                        <p className="font-medium">STU-002</p>
-                        <p className="text-sm text-gray-600">
-                          Premium content access
-                        </p>
+                  <div className="space-y-3 overflow-auto">
+                    {transactions?.items?.map((transaction, index) => (
+                      <div
+                        className="flex items-center justify-between rounded border p-3"
+                        key={index}
+                      >
+                        <div>
+                          <p className="font-medium">ID: {transaction?.id}</p>
+                          <p className="text-sm text-gray-600">
+                            {`${shortenAddress(transaction?.sender)} --> ${shortenAddress(transaction?.to)}`}
+                          </p>
+                        </div>
+                        <span className="font-medium text-green-600">
+                          {transaction?.amount}
+                        </span>
                       </div>
-                      <span className="font-medium text-red-600">-25</span>
-                    </div>
-                    <div className="flex items-center justify-between rounded border p-3">
-                      <div>
-                        <p className="font-medium">STU-003</p>
-                        <p className="text-sm text-gray-600">
-                          Manual credit adjustment
-                        </p>
-                      </div>
-                      <span className="font-medium text-green-600">+100</span>
-                    </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-
-          {/* System Analytics
-          <TabsContent value="analytics">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2" />
-                    System Analytics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span>Total Platform Users</span>
-                      <span className="font-bold">1,234</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Active This Month</span>
-                      <span className="font-bold">892</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Course Completions</span>
-                      <span className="font-bold">456</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Certificates Issued</span>
-                      <span className="font-bold">234</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Average Session Time</span>
-                      <span className="font-bold">45 min</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Performance Metrics</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Course Completion Rate</span>
-                        <span className="text-sm font-medium">78%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: "78%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Student Satisfaction</span>
-                        <span className="text-sm font-medium">92%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: "92%" }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Platform Uptime</span>
-                        <span className="text-sm font-medium">99.9%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: "99.9%" }}></div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent> */}
 
           {/* Contract Controls */}
           <TabsContent value="contracts">
@@ -524,39 +379,80 @@ export default function AdminPanel() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-1">
                   <div className="space-y-4">
                     <h3 className="font-medium">Contract Status</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between rounded border p-3">
                         <span>StudentID </span>
-                        <Badge variant="default">Active</Badge>
+                        <div className="flex items-center justify-center gap-2">
+                          {statusStudentIDIsPaused ? (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  pauseAndUnpauseContract('unPauseStudentID');
+                                }}
+                              >
+                                <Play className="h-4 w-4" />
+                              </Button>
+                              <Badge variant="destructive">Paused</Badge>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  pauseAndUnpauseContract('pauseStudentID');
+                                }}
+                              >
+                                <Pause className="h-2 w-2" />
+                              </Button>
+                              <Badge variant="default">Active</Badge>
+                            </>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center justify-between rounded border p-3">
                         <span>CreditCampus</span>
-                        <Badge variant="default">Active</Badge>
+                        <div className="flex items-center justify-center gap-2">
+                          {statusstatusCampusCreditIsPaused ? (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  pauseAndUnpauseContract(
+                                    'unPauseCampusCredit',
+                                  );
+                                }}
+                              >
+                                <Play className="h-2 w-2" />
+                              </Button>
+                              <Badge variant="destructive">Paused</Badge>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  pauseAndUnpauseContract('pauseCampusCredit');
+                                }}
+                              >
+                                <Pause className="h-2 w-2" />
+                              </Button>
+                              <Badge variant="default">Active</Badge>
+                            </>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center justify-between rounded border p-3">
                         <span>Master</span>
                         <Badge variant="default">Active</Badge>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium">Contract Status </h3>
-                      <Badge variant="default">Active</Badge>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Button
-                        variant="destructive"
-                        className="w-full justify-start"
-                      >
-                        <Settings className="mr-2 h-4 w-4" />
-                        Emergency Pause
-                      </Button>
                     </div>
                   </div>
                 </div>

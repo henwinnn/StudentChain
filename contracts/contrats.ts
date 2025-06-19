@@ -1,16 +1,19 @@
 import { abi } from '@/app/ABI/abi';
+import { abiCredit } from '@/app/ABI/abiCredit';
+import { abiStudent } from '@/app/ABI/abiStudent';
 import type { Address } from 'viem';
 
 export const CampusCreditContract = {
-  address: '0x49562683Dc1db83873583da74F781AD556d82cd2' as Address,
-  abi: abi,
+  address: '0xfcb5b4b87E3c7716a136b290465A18e93a06fDBa' as Address,
+  abi: abiCredit,
 } as const;
+
 export const StudentIDContract = {
-  address: '0xB320351898f33F164E10AC1Ed3e2D6205df2f061' as Address,
-  abi: abi,
+  address: '0xb3A86F2982cD02BC4832c02699ae30c6C88F329A' as Address,
+  abi: abiStudent,
 } as const;
 
 export const CampusMasterContract = {
-  address: '0x83eE0bC5B57E0E43472636Cb7a506582eda53707' as Address,
+  address: '0x8ceEde932dB45E8cb6389D2ffa7b09385f3386dB' as Address,
   abi: abi,
 } as const;
